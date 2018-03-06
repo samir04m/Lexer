@@ -100,7 +100,7 @@ def t_ENTERO(t):
 def t_IDENTIFICADOR(t):
     r'\w+(_\d\w)*'
     #r'[a-zA-Z][a-zA-Z0-9_]*'
-    if t.value in palabrasReservadas:
+    if t.value in miLenguaje.getCaracteres():
         t.type = 'PALABRA_RESERVADA'
     elif t.value in literales:
         t.type = 'LITERAL'

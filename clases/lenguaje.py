@@ -7,4 +7,7 @@ class Lenguaje:
 	def __str__(self):
 		return str(self.caracteres)
 
+	def getCaracteres(self):
+		return self.caracteres
+
 	
