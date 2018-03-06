@@ -64,7 +64,7 @@ class LexError(Exception):
 class LexToken(object):
     def __str__(self):
         #return 'LexToken(%s,%r,%d,%d)' % (self.type, self.value, self.lineno, self.lexpos)
-        return 'Linea %d -> Token %r : \n\tLexema : %r, Tipo : %s\n-------------------------------------------------------' % (self.lineno, self.value, self.value, self.type) 
+        return 'Linea %d\n\tToken (%r) :\n\t\tLexema : %r\n\t\tTipo : %s\n' % (self.lineno, self.value, self.value, self.type) 
     def __repr__(self):
         return str(self)
 

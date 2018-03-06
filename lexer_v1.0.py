@@ -137,71 +137,38 @@ def t_newline(t):
 def t_comments(t):
     r'\*\*\*(.|\n)*?\*\*\*'
     t.lexer.lineno += t.value.count('\n')
-    #print("Linea %d inicia comentario de multiples lineas"%(t.lineno))
+    print("Linea %d inicia comentario de multiples lineas"%(t.lineno))
 
 def t_comments_ONELine(t):
-    r'\*\*(.)*\n'
-    t.lexer.lineno += 1
-    #print("Linea %d comentario"%(t.lineno))
+     r'\*\*(.)*\n'
+     t.lexer.lineno += 1
+     print("Linea %d comentario"%(t.lineno))
 
 def t_error(t):
     print("Linea %d -> Token %r invalido." % (t.lineno, t.value) )
-    print("\n")
+    print("-------------------------------------------------------")
     t.lexer.skip(1)    
     
 def invalido(t, arg='Error Indefinido'):
     print("Linea %d -> Token %r invalido." % (t.lineno, t.value) )
     if arg : print("Descripcion del error :", arg)
-    print("\n")
+    print("-------------------------------------------------------")
 
 
-import sys
-
-def progressbar(valor, total, estado=''):
-    longitud_barra = 60
-    filled_len = int(round(longitud_barra * valor / float(total)))
-
-    percents = round(100.0 * valor / float(total), 1)
-    bar = '#' * filled_len + '-' * (longitud_barra - filled_len)
-
-    sys.stdout.write('[%s] %s%s - Token %s/%s\r' % (bar, percents, '%', estado, total))
-    sys.stdout.flush() 
-
-
+directorio = str(os.getcwd())+"/archivos/"
 nombreArchivo =  'codigo.blur'
-ruta = str(os.getcwd())+"/archivos/"+nombreArchivo
+ruta = directorio+nombreArchivo
+print (ruta)
 fp = codecs.open(ruta,"r","utf-8")
 codigoArchivo = fp.read()
 fp.close()
 
 analizadorLexico = lex.lex()
+#print(codigoArchivo)
 analizadorLexico.input(codigoArchivo)
 
-analizadorLexicoTest = lex.lex()
-analizadorLexicoTest.input(codigoArchivo)
-
 if __name__ == '__main__':
-    total = 0
-    while True:
-        tkn0 = analizadorLexicoTest.token()
-        if not tkn0 : break
-        total = total + 1 
-    os.system('clear')
-    sys.stdout.flush() 
-    
-    print("Se iniciara el analizador lexico para el archivo %r"% (nombreArchivo))
-    c = 1 
     while True:
         tkn = analizadorLexico.token()
         if not tkn : break
-        input("\n\nPresione cualquier tecla para continuar...   ")
-        os.system('clear')
-        print (tkn, "\n")
-        progressbar(c, total, c)
-        c = c + 1 
-        
-    os.system('clear')
-    print ("\n\n\n\t\tHa finalizado el analisis lexico")
-    input("\n\n\n\n\nPresione cualquier tecla para salir")
-    os.system('clear')
-    sys.stdout.flush()   
+        print (tkn)
