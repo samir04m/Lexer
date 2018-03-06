@@ -1,0 +1,25 @@
+
+** Comentario de una linea
+
+***
+    Comentario de
+    varias lineas
+***
+FUN myFuncion()[
+    MOST "digite edad"
+    edad :: OBT()
+
+    OCUQ edad >:: 18 [
+        MOST "Eres mayor"
+        DEVOL VER
+    NOCUQ
+        MOST "Has vivido"
+        year :: 2018 - edad
+        REPETMQ VER [
+            MOST year
+            OCUQ year ::: 2018 [ FIN ]
+            year :: year + 1
+        ]
+        DEVOL FAL
+    ]
+]

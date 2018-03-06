@@ -63,7 +63,8 @@ class LexError(Exception):
 # Token class.  This class is used to represent the tokens produced.
 class LexToken(object):
     def __str__(self):
-        return 'LexToken(%s,%r,%d,%d)' % (self.type, self.value, self.lineno, self.lexpos)
+        #return 'LexToken(%s,%r,%d,%d)' % (self.type, self.value, self.lineno, self.lexpos)
+        return 'Linea %d -> Token %r : \n\tLexema : %r, Tipo : %s\n-------------------------------------------------------' % (self.lineno, self.value, self.value, self.type) 
     def __repr__(self):
         return str(self)
 
