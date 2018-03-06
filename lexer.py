@@ -19,6 +19,7 @@ palabrasReservadas = (
     "DEVOL"
 )
 
+
 miLenguaje = Lenguaje(palabrasReservadas)
 
 literales = (
@@ -104,7 +105,7 @@ def t_IDENTIFICADOR(t):
         t.type = 'PALABRA_RESERVADA'
     elif t.value in literales:
         t.type = 'LITERAL'
-    elif t.value.upper() in palabrasReservadas:
+    elif t.value.upper() in miLenguaje.getCaracteres():
         invalido(t,'Es una palabra reservada')
         return
     
@@ -145,11 +146,15 @@ def t_comments_ONELine(t):
     #print("Linea %d comentario"%(t.lineno))
 
 def t_error(t):
-    print("Linea %d -> Token %r invalido." % (t.lineno, t.value) )
+    os.system('clear')
+    sys.stdout.flush()
+    print("Linea %d -> Token %r invalido." % (t.lineno, str(t.value)[0]) )
     print("\n")
-    t.lexer.skip(1)    
+    t.lexer.skip(1) 
     
 def invalido(t, arg='Error Indefinido'):
+    os.system('clear')
+    sys.stdout.flush()
     print("Linea %d -> Token %r invalido." % (t.lineno, t.value) )
     if arg : print("Descripcion del error :", arg)
     print("\n")

@@ -65,7 +65,7 @@ tokens = tiposDeToken + (
     "COMILLA_SIMPLE"
 )
 
-t_ignore =' \t'
+t_ignore = ' \t'
 t_ASIGNACION = r'\:\:'
 t_NUMERAL = r'\#'
 
@@ -145,8 +145,8 @@ def t_comments_ONELine(t):
      print("Linea %d comentario"%(t.lineno))
 
 def t_error(t):
-    print("Linea %d -> Token %r invalido." % (t.lineno, t.value) )
-    print("-------------------------------------------------------")
+    print("Linea %d -> Token %r invalido." % (t.lineno, str(t.value)[0]) )
+    print("\n")
     t.lexer.skip(1)    
     
 def invalido(t, arg='Error Indefinido'):

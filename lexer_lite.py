@@ -44,7 +44,7 @@ t_ignore =' \t'
 t_ASIGNACION = r'\:\:'
 t_NUMERAL = r'\#'
 
-t_OPERADOR = r'\+|\-|\*|\/|\%|\^|\<\:\:|\>\:\:|\V|\F|\:\:\:|\:\-\:|\<\<|\>\>'
+t_OPERADOR = r'\+|\-|\*|\/|\%|\^|\<\:\:|\>\:\:|\:\:\:|\:\-\:|\<\<|\>\>'
 
 t_DELIMITADOR = r'\"|\'|\\|\(|\)|\{|\}|\[|\]|\,|\;'
 t_LITERAL = r"[-+]?\d*\.*\d+"
@@ -86,11 +86,15 @@ def t_comments_ONELine(t):
     #print("Linea %d comentario"%(t.lineno))
 
 def t_error(t):
-    print("Linea %d -> Token %r invalido." % (t.lineno, t.value) )
+    os.system('clear')
+    sys.stdout.flush()
+    print("Linea %d -> Token %r invalido." % (t.lineno, str(t.value)[0]) )
     print("\n")
-    t.lexer.skip(1)    
+    t.lexer.skip(1)  
     
 def invalido(t, arg='Error Indefinido'):
+    os.system('clear')
+    sys.stdout.flush()
     print("Linea %d -> Token %r invalido." % (t.lineno, t.value) )
     if arg : print("Descripcion del error :", arg)
     print("\n")
