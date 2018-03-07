@@ -144,7 +144,8 @@ if __name__ == '__main__':
         print (tkn, "\n")
         progressbar(c, total, c)
         c = c + 1 
-        
+    
+    input()
     os.system('clear')
     print ("\n\n\n\t\tHa finalizado el analisis lexico")
     input("\n\n\n\n\nPresione cualquier tecla para salir")
