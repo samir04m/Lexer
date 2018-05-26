@@ -5,44 +5,31 @@ import codecs
 resultado_lexer = []
 
 palabrasReservadas = (
-    "ver",
-    "obt",
-    "es",
-    "deloc",
-    "yy",
-    "oo",
-    "negar",
-    "repetir",
-    "func",
-    "fin",
-    "devol"
-    # "VER", #print
-    # "OBT", #input
-    # "ES", #if
-    # "DELOC", #else
-    # "_Y_", #and
-    # "_O_", #or
-    # 'NEGAR', #not
-    # "REPETIRMQ", #while
-    # # "FIN",
-    # "FUNC", #def
-    # "DEV" #return
+    "ver", #print
+    "obt", #input
+    "es", #if
+    "deloc", #else
+    "yy", #and
+    "oo", #or
+    "negar", #not
+    "repetir", #whie, for
+    "func", #def
+    "fin", #break
+    "devol" #return
 )
 
 literales = (
-    "CIERTO", #true
-    "FALSO"  #false
+    "CIERTO",
+    "FALSO"
 )
 
 tiposDeToken = (
     "IDENTIFICADOR",
     "PALABRA_RESERVADA",
-    "OPERADOR",
-    "DELIMITADOR",
     "LITERAL"
 )
 
-tokens = tiposDeToken + (
+tokens = literales + tiposDeToken + (
     "IMPRIMIR",
     "LEER",
     "SI",
@@ -86,32 +73,29 @@ tokens = tiposDeToken + (
     "COMILLA_SIMPLE"
 )
 
-t_ASIGNACION = r'\:\:'
-t_NUMERAL = r'\#'
-
 t_SUMA = r'\+'
 t_RESTA = r'-'
 t_MULTIPLICACION = r'\*'
 t_DIVISION = r'/'
 t_MODULO = r'\%'
 t_POTENCIA = r'(\*{2} | \^)'
-# t_POTENCIA = r'\^'
+
+t_ASIGNACION = r'\:\:'
+t_NUMERAL = r'\#'
 
 t_MENOR_QUE = r'\<\<'
 t_MAYOR_QUE = r'\>\>'
-t_PUNTO_COMA = '\;'
-t_COMA = r'\,'
+t_PUNTO_COMA = ';'
+t_COMA = r','
 t_PARENTESIS_IZQUIERDO = r'\('
 t_PARENTESIS_DERECHO = r'\)'
 t_CORCHETE_IZQUIERDO = r'\['
 t_CORCHETE_DERECHO = r'\]'
-t_LLAVE_IZQUIERDA = r'\{'
-t_LLAVE_DERECHA = r'\}'
+t_LLAVE_IZQUIERDA = r'{'
+t_LLAVE_DERECHA = r'}'
 t_BACKSLASH = r'\\'
 t_COMILLA_SIMPLE = r'\''
 t_COMILLA_DOBLE = r'\"'
-
-t_LITERAL = r"[-+]?\d*\.*\d+"
 
 def t_IMPRIMIR(t):
     r'ver'
@@ -138,7 +122,7 @@ def t_O(t):
     return t
 
 def t_NEGAR(t):
-    r'negar'
+    r'neg'
     return t
 
 def t_MIESTRAS(t):
@@ -164,9 +148,6 @@ def t_ENTERO(t):
 
 def t_IDENTIFICADOR(t):
     r'\w+(_\d\w)*'
-    #r'[a-zA-Z][a-zA-Z0-9_]*'
-    # if t.value in palabrasReservadas:
-    #     t.type = 'PALABRA_RESERVADA'
     if t.value in literales:
         t.type = 'LITERAL'
     elif t.value.lower() in palabrasReservadas:
@@ -233,15 +214,3 @@ codigoArchivo = fp.read()
 fp.close()
 
 analizadorLexico = lex.lex()
-analizadorLexico.input(codigoArchivo)
-
-if __name__ == '__main__':
-    while True:
-        tkn = analizadorLexico.token()
-        if not tkn : break
-        input("\n\nPresione cualquier tecla para continuar...   ")
-        print (tkn, "\n")
-
-    input()
-    print ("\n\n\n\t\tHa finalizado el analisis lexico")
-    input("\n\n\n\n\nPresione cualquier tecla para salir")

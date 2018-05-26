@@ -8,7 +8,7 @@ from sys import stdin
 
 resultado_parser = []
 parser_log = []
-nombres = {}
+variables = {}
 
 precedence = (
     ('right', 'ASIGNACION'),
@@ -18,12 +18,12 @@ precedence = (
     ('left', 'MULTIPLICACION', 'DIVISION', 'MODULO'),
     ('left', 'NEGAR'),
     ('left', 'POTENCIA'),
-    ('left', 'PARENTESIS_IZQUIERDO', 'PARENTESIS_DERECHO'),
+    ('right', 'NEGATIVO'),
 )
 
 def p_declaracionAsignacion(t):
-    'declaracion : IDENTIFICADOR ASIGNACION expresion'
-    nombres[t[1]] = t[3]
+    'declaracion : IDENTIFICADOR ASIGNACION expresion PUNTO_COMA'
+    variables[t[1]] = t[3]
 
 def p_declaracionExpresion(t):
     'declaracion : expresion'
@@ -56,6 +56,10 @@ def p_expresionOperacion(t):
             t[0] *= t[1]
             i -= 1
 
+def p_expresionEnteroNegativo(t):
+    'expresion : RESTA expresion %prec NEGATIVO'
+    t[0] = -t[2]
+
 def p_grupoExpresiones(t):
     '''
     expresion  : PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
@@ -75,9 +79,9 @@ def p_expresionLogica(t):
         | PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO MENOR_QUE PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
         | PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO MAYOR_QUE PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
         | PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO MENOR_IGUAL PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
-        | PARENTESIS_IZQUIERDO  expresion PARENTESIS_DERECHO MAYOR_IGUAL PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
-        | PARENTESIS_IZQUIERDO  expresion PARENTESIS_DERECHO IGUAL PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
-        | PARENTESIS_IZQUIERDO  expresion PARENTESIS_DERECHO DIFERENTE PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
+        | PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO MAYOR_IGUAL PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
+        | PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO IGUAL PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
+        | PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO DIFERENTE PARENTESIS_IZQUIERDO expresion PARENTESIS_DERECHO
     '''
     if t[2] == "<<": t[0] = t[1] < t[3]
     elif t[2] == ">>": t[0] = t[1] > t[3]
@@ -100,24 +104,24 @@ def p_expresionLogica(t):
 
 def p_expresionBooleana(t):
     '''
-    expresion   :   expresion Y expresion
-                |   expresion O expresion
-                |   expresion NEGAR expresion
-                |  PARENTESIS_IZQUIERDO expresion Y expresion PARENTESIS_DERECHO
-                |  PARENTESIS_IZQUIERDO expresion O expresion PARENTESIS_DERECHO
-                |  PARENTESIS_IZQUIERDO expresion NEGAR expresion PARENTESIS_DERECHO
+    expresion   : expresion Y expresion
+                | expresion O expresion
+                | expresion NEGAR expresion
+                | PARENTESIS_IZQUIERDO expresion Y expresion PARENTESIS_DERECHO
+                | PARENTESIS_IZQUIERDO expresion O expresion PARENTESIS_DERECHO
+                | PARENTESIS_IZQUIERDO expresion NEGAR expresion PARENTESIS_DERECHO
     '''
     if t[2] == "yy":
         t[0] = t[1] and t[3]
     elif t[2] == "oo":
         t[0] = t[1] or t[3]
-    elif t[2] == "negar":
+    elif t[2] == "neg":
         t[0] =  t[1] is not t[3]
     elif t[3] == "yy":
         t[0] = t[2] and t[4]
     elif t[3] == "oo":
         t[0] = t[2] or t[4]
-    elif t[3] == "negar":
+    elif t[3] == "neg":
         t[0] =  t[2] is not t[4]
 
 def p_expresionEntero(t):
@@ -131,25 +135,27 @@ def p_expresionCadena(t):
 def p_expresionIdentificador(t):
     'expresion : IDENTIFICADOR'
     try:
-        t[0] = nombres[t[1]]
+        t[0] = variables[t[1]]
     except LookupError:
-        global parser_log
+        # global resultado_parser
         mensaje = "En la linea {} -> \"{}\" no definido.".format(t.lexer.lineno,t[1])
-        resultado_parser.append(mensaje)
-        # print(mensaje)
+        # resultado_parser.append(mensaje)
+        print(mensaje)
         t[0] = 0
 
 def p_error(t):
     global resultado_parser
     if t:
-        mensaje = "Error sintactico de tipo {} en el valor {}".format( str(t.type),str(t.value))
+        mensaje = "En la linea {} -> Error sintactico de tipo {} en el valor {}".format(str(t.lexer.lineno), str(t.type), str(t.value))
         print(mensaje)
     else:
-        mensaje = "Error sintactico {}".format(t)
+        mensaje = "En la linea {} -> Error sintactico {}".format(str(t.lexer.lineno), t)
         print(mensaje)
     resultado_parser.append(mensaje)
 
-def prueba_sintactica(codigo):
+parser = yacc.yacc()
+
+def ejecucion_linea_por_linea(codigo):
     global resultado_gramatica
     resultado_parser.clear()
 
@@ -158,7 +164,7 @@ def prueba_sintactica(codigo):
             resultado = parser.parse(lineaCodigo)
             if resultado:
                 resultado_parser.append(str(resultado))
-        else: print("codigo vacia")
+        else: print("linea de codigo vacia")
 
     # print("result: ", resultado_parser)
     print('\n'.join(resultado_parser))
@@ -170,7 +176,4 @@ fp = codecs.open(ruta,"r","utf-8")
 codigoArchivo = fp.read()
 fp.close()
 
-parser = yacc.yacc()
-# result = parser.parse(codigoArchivo)
-prueba_sintactica(codigoArchivo)
-# print (result)
+ejecucion_linea_por_linea(codigoArchivo)
