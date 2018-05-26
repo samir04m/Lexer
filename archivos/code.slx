@@ -1,0 +1,25 @@
+
+** Comentario de una linea
+
+***
+    Comentario de
+    varias lineas
+***
+func myFuncion()[
+    ver "digite edad"
+    edad :: obt()
+
+    es edad >:: 18 [
+        ver "Eres mayor"
+        devol CIERTO
+    ] deloc [
+        ver "Has vivido"
+        year :: 2018 - edad
+        repetir CIERTO [
+            ver year
+            es year ::: 2018 [ fin ]
+            year :: year + 1
+        ]
+        devol FALSO
+    ]
+]

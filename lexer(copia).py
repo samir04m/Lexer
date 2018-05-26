@@ -1,37 +1,29 @@
+from clases.lenguaje import Lenguaje
+
 import ply.lex as lex
 import os
 import codecs
 
-resultado_lexer = []
-
 palabrasReservadas = (
-    "ver",
-    "obt",
-    "es",
-    "deloc",
-    "yy",
-    "oo",
-    "negar",
-    "repetir",
-    "func",
-    "fin",
-    "devol"
-    # "VER", #print
-    # "OBT", #input
-    # "ES", #if
-    # "DELOC", #else
-    # "_Y_", #and
-    # "_O_", #or
-    # 'NEGAR', #not
-    # "REPETIRMQ", #while
-    # # "FIN",
-    # "FUNC", #def
-    # "DEV" #return
+    "MOST",
+    "OBT",
+    "OCUQ",
+    "NOCUQ",
+    "_Y_",
+    "_O_",
+    'NEG',
+    "REPET",
+    "REPETMQ",
+    "FIN",
+    "FUN",
+    "DEVOL"
 )
 
+
+miLenguaje = Lenguaje(palabrasReservadas)
+
 literales = (
-    "CIERTO", #true
-    "FALSO"  #false
+    "VER", "FAL"
 )
 
 tiposDeToken = (
@@ -43,18 +35,6 @@ tiposDeToken = (
 )
 
 tokens = tiposDeToken + (
-    "IMPRIMIR",
-    "LEER",
-    "SI",
-    "SINO",
-    "Y",
-    "O",
-    "NEGAR",
-    "MIESTRAS",
-    "FUNCION",
-    "BREAK",
-    "RETORNAR",
-
     "ENTERO",
     "CADENA",
     "NUMERAL",
@@ -86,6 +66,7 @@ tokens = tiposDeToken + (
     "COMILLA_SIMPLE"
 )
 
+t_ignore =' \t'
 t_ASIGNACION = r'\:\:'
 t_NUMERAL = r'\#'
 
@@ -94,12 +75,11 @@ t_RESTA = r'-'
 t_MULTIPLICACION = r'\*'
 t_DIVISION = r'/'
 t_MODULO = r'\%'
-t_POTENCIA = r'(\*{2} | \^)'
-# t_POTENCIA = r'\^'
+t_POTENCIA = r'\^'
 
 t_MENOR_QUE = r'\<\<'
 t_MAYOR_QUE = r'\>\>'
-t_PUNTO_COMA = '\;'
+t_PUNTO_COMA = ';'
 t_COMA = r'\,'
 t_PARENTESIS_IZQUIERDO = r'\('
 t_PARENTESIS_DERECHO = r'\)'
@@ -113,50 +93,6 @@ t_COMILLA_DOBLE = r'\"'
 
 t_LITERAL = r"[-+]?\d*\.*\d+"
 
-def t_IMPRIMIR(t):
-    r'ver'
-    return t
-
-def t_LEER(t):
-    r'obt'
-    return t
-
-def t_SI(t):
-    r'es'
-    return t
-
-def t_SINO(t):
-    r'deloc'
-    return t
-
-def t_Y(t):
-    r'yy'
-    return t
-
-def t_O(t):
-    r'oo'
-    return t
-
-def t_NEGAR(t):
-    r'negar'
-    return t
-
-def t_MIESTRAS(t):
-    r'repetir'
-    return t
-
-def t_FUNCION(t):
-    r'func'
-    return t
-
-def t_BREAK(t):
-    r'fin'
-    return t
-
-def t_RETORNAR(t):
-    r'devol'
-    return t
-
 def t_ENTERO(t):
     r'\d+'
     t.value = int(t.value)
@@ -165,11 +101,11 @@ def t_ENTERO(t):
 def t_IDENTIFICADOR(t):
     r'\w+(_\d\w)*'
     #r'[a-zA-Z][a-zA-Z0-9_]*'
-    # if t.value in palabrasReservadas:
-    #     t.type = 'PALABRA_RESERVADA'
-    if t.value in literales:
+    if t.value in miLenguaje.getCaracteres():
+        t.type = 'PALABRA_RESERVADA'
+    elif t.value in literales:
         t.type = 'LITERAL'
-    elif t.value.lower() in palabrasReservadas:
+    elif t.value.upper() in miLenguaje.getCaracteres():
         invalido(t,'Es una palabra reservada')
         return
 
@@ -209,24 +145,35 @@ def t_comments_ONELine(t):
     t.lexer.lineno += 1
     #print("Linea %d comentario"%(t.lineno))
 
-t_ignore =' \t'
-
 def t_error(t):
-    global resultado_lexer
-    mensaje = "Linea %d -> Token %r invalido." % (t.lineno, str(t.value)[0])
-    print(mensaje, "\n")
-    resultado_lexer.append(mensaje)
+    os.system('clear')
+    sys.stdout.flush()
+    print("Linea %d -> Token %r invalido." % (t.lineno, str(t.value)[0]) )
+    print("\n")
     t.lexer.skip(1)
 
 def invalido(t, arg='Error Indefinido'):
-    global resultado_lexer
-    mensaje = "Linea %d -> Token %r invalido." % (t.lineno, t.value)
-    if arg : mensaje.append(". Descripcion del error: "+arg)
-    print(mensaje,"\n")
-    resultado_lexer.append(mensaje)
+    os.system('clear')
+    sys.stdout.flush()
+    print("Linea %d -> Token %r invalido." % (t.lineno, t.value) )
+    if arg : print("Descripcion del error :", arg)
+    print("\n")
 
 
-nombreArchivo =  'code.slx'
+import sys
+
+def progressbar(valor, total, estado=''):
+    longitud_barra = 60
+    filled_len = int(round(longitud_barra * valor / float(total)))
+
+    percents = round(100.0 * valor / float(total), 1)
+    bar = '#' * filled_len + '-' * (longitud_barra - filled_len)
+
+    sys.stdout.write('[%s] %s%s - Token %s/%s\r' % (bar, percents, '%', estado, total))
+    sys.stdout.flush()
+
+
+nombreArchivo =  'codigo.blur'
 ruta = str(os.getcwd())+"/archivos/"+nombreArchivo
 fp = codecs.open(ruta,"r","utf-8")
 codigoArchivo = fp.read()
@@ -235,13 +182,32 @@ fp.close()
 analizadorLexico = lex.lex()
 analizadorLexico.input(codigoArchivo)
 
+analizadorLexicoTest = lex.lex()
+analizadorLexicoTest.input(codigoArchivo)
+
 if __name__ == '__main__':
+    total = 0
+    while True:
+        tkn0 = analizadorLexicoTest.token()
+        if not tkn0 : break
+        total = total + 1
+    os.system('clear')
+    sys.stdout.flush()
+
+    print("Se iniciara el analizador lexico para el archivo %r"% (nombreArchivo))
+    c = 1
     while True:
         tkn = analizadorLexico.token()
         if not tkn : break
         input("\n\nPresione cualquier tecla para continuar...   ")
+        os.system('clear')
         print (tkn, "\n")
+        progressbar(c, total, c)
+        c = c + 1
 
     input()
+    os.system('clear')
     print ("\n\n\n\t\tHa finalizado el analisis lexico")
     input("\n\n\n\n\nPresione cualquier tecla para salir")
+    os.system('clear')
+    sys.stdout.flush()
